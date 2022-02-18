@@ -6,6 +6,39 @@ function scrollHandler(overlay) {
     }
 }
 
+function showCurrentDayEvents(eventsBoxDate, eventsBoxCategories) {
+    const currentDayItem = document.querySelector('.calendar_table_item.currentDay');
+
+    const dataDate = currentDayItem?.dataset['date'];
+    const dataMen = {name: 'Muži', events: currentDayItem?.dataset['men']};
+    const dataWomen = {name: 'Ženy', events: currentDayItem?.dataset['women']};
+    const dataYouth =  {name: 'Mládež', events: currentDayItem?.dataset['youth']};
+    const dataJuniors =  {name: 'Junioři', events: currentDayItem?.dataset['juniors']};
+
+    const dataCategory = [dataMen, dataWomen, dataYouth, dataJuniors];
+
+    eventsBoxDate.textContent = dataDate;
+
+    eventsBoxCategories?.forEach((category, index) => {
+        if (dataCategory[index].events) {
+            const categoryTitle = category?.querySelector('h4');
+            categoryTitle.textContent = dataCategory[index].name;
+            category.style.display = 'block';
+
+            const events = dataCategory[index].events.split(', ');
+            console.log(events)
+            for (eventItem of events) {
+                const liElement = document.createElement('li');
+                liElement.textContent = eventItem;
+
+                category?.querySelector('.calendar_category_events').appendChild(liElement);
+            }
+        } else {
+            category.style.display = 'none';
+        }
+    })
+}
+
 function showEventsHandler(item, eventsBoxDate, eventsBoxCategories) {
     const eventsContainers = document.querySelectorAll('.calendar_category_events');
 
@@ -46,12 +79,12 @@ function hoverCalendarItemHandler() {
     const calendarItems = document.querySelectorAll('.calendar_table_item');    
     const overlay = document.querySelector('.onScroll_overlay');
 
-    window.addEventListener('scroll', () => scrollHandler(overlay))
-
     const eventsBoxDate = document.querySelector('.calendar_col2 h3');
     const eventsBoxCategories = document.querySelectorAll('.calendar_category');
 
-    eventsBoxCategories?.forEach(category => category.style.display = 'none');
+    showCurrentDayEvents(eventsBoxDate, eventsBoxCategories);
+
+    window.addEventListener('scroll', () => scrollHandler(overlay))
 
     calendarItems?.forEach(item => {
         if (window.innerWidth > 768) {
